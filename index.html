@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>語感邊境：台味守門員</title>
+  <style>
+    :root {
+      --bg: #f6f5f1;
+      --surface: #ffffff;
+      --surface-alt: #efede7;
+      --text-main: #1f2421;
+      --text-sub: #5f6662;
+      --border: #dcd8ce;
+      --accent: #2c4a3e;
+      --accent-hover: #1e352c;
+      --pass: #2e6f56;
+      --pass-bg: #e8f3ee;
+      --detain: #a64438;
+      --detain-bg: #faecea;
+      --gold: #a87b2d;
+      --shadow: 0 8px 24px rgba(31, 36, 33, 0.06);
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 頂部導覽列 */
+    header {
+      width: 100%;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .brand {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+      cursor: pointer;
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-ghost:hover {
+      background: var(--surface-alt);
+    }
+
+    /* 主容器，確保所有區塊獨立排版不重疊遮擋 */
+    main {
+      width: 100%;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 36px 20px 64px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .view {
+      display: none;
+      flex-direction: column;
+      gap: 28px;
+      width: 100%;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .view.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 主頁大標題區 */
+    .hero {
+      text-align: center;
+      padding: 28px 20px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      margin: 0 auto;
+      padding: 4px 12px;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      background: var(--surface-alt);
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      color: var(--text-main);
+      line-height: 1.25;
+    }
+
+    .hero p {
+      color: var(--text-sub);
+      font-size: 1rem;
+      max-width: 540px;
+      margin: 0 auto;
+    }
+
+    /* 主題雙卡片 */
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .theme-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 20px;
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .theme-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+    }
+
+    .theme-badge {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .theme-card h2 {
+      font-size: 1.45rem;
+      margin-bottom: 10px;
+      color: var(--text-main);
+    }
+
+    .theme-card p {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+    }
+
+    .theme-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 14px;
+      border-top: 1px solid var(--surface-alt);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    /* 總通關橫幅（解鎖後顯示於主頁） */
+    .capstone-banner {
+      background: var(--surface);
+      border: 1px solid var(--accent);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* 關卡選擇頁 */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+
+    .section-header h2 {
+      font-size: 1.6rem;
+    }
+
+    .level-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .level-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .level-item.unlocked {
+      cursor: pointer;
+    }
+
+    .level-item.unlocked:hover {
+      border-color: var(--accent);
+      background: #fcfcfa;
+    }
+
+    .level-item.locked {
+      opacity: 0.55;
+      cursor: not-allowed;
+      background: var(--surface-alt);
+    }
+
+    .level-info h3 {
+      font-size: 1.15rem;
+      margin-bottom: 4px;
+    }
+
+    .level-info p {
+      font-size: 0.9rem;
+      color: var(--text-sub);
+    }
+
+    .level-status {
+      text-align: right;
+      min-width: 110px;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    /* 遊戲主畫面：嚴格分層流式佈局，零遮擋 */
+    .hud-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      text-align: center;
+    }
+
+    .hud-cell span {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--text-sub);
+    }
+
+    .hud-cell strong {
+      font-size: 1.2rem;
+      color: var(--text-main);
+    }
+
+    .hud-cell.combo strong {
+      color: var(--gold);
+    }
+
+    .stage-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 28px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      min-height: 260px;
+      justify-content: center;
+    }
+
+    .speaker-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.88rem;
+      color: var(--text-sub);
+      border-bottom: 1px solid var(--surface-alt);
+      padding-bottom: 12px;
+    }
+
+    /* 夜市題目樣式 */
+    .nightmarket-box {
+      text-align: center;
+      padding: 16px 0;
+    }
+
+    .nightmarket-item {
+      display: inline-block;
+      padding: 20px 36px;
+      border: 2px solid var(--text-main);
+      border-radius: 12px;
+      background: var(--bg);
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    .nightmarket-context {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+    }
+
+    /* 支語警察對話樣式 */
+    .dialogue-box {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .speaker-name {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--accent);
+    }
+
+    .speech-bubble {
+      background: var(--bg);
+      border-left: 4px solid var(--accent);
+      padding: 20px 22px;
+      border-radius: 0 12px 12px 0;
+      font-size: 1.2rem;
+      line-height: 1.75;
+      color: var(--text-main);
+    }
+
+    /* 即時判定回饋條（不遮擋題目與按鈕） */
+    .feedback-strip {
+      min-height: 44px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 0.94rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: var(--surface-alt);
+      color: var(--text-sub);
+    }
+
+    .feedback-strip.correct {
+      background: var(--pass-bg);
+      color: var(--pass);
+    }
+
+    .feedback-strip.wrong {
+      background: var(--detain-bg);
+      color: var(--detain);
+    }
+
+    /* 操作按鈕列 */
+    .action-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .btn-action {
+      padding: 18px 20px;
+      border-radius: var(--radius);
+      border: 1.5px solid transparent;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .btn-action:active {
+      transform: scale(0.98);
+    }
+
+    .btn-action:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-pass {
+      background: var(--pass-bg);
+      color: var(--pass);
+      border-color: var(--pass);
+    }
+
+    .btn-pass:hover:not(:disabled) {
+      background: var(--pass);
+      color: #ffffff;
+    }
+
+    .btn-detain {
+      background: var(--detain-bg);
+      color: var(--detain);
+      border-color: var(--detain);
+    }
+
+    .btn-detain:hover:not(:disabled) {
+      background: var(--detain);
+      color: #ffffff;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #ffffff;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    /* 單關結算面板 */
+    .result-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 28px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .result-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      background: var(--bg);
+      padding: 18px;
+      border-radius: 12px;
+    }
+
+    .result-stats div span {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--text-sub);
+    }
+
+    .result-stats div strong {
+      font-size: 1.4rem;
+    }
+
+    .result-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* 全部通關學術專題報告區 */
+    .report-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 30px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .report-card h2 {
+      font-size: 1.75rem;
+      line-height: 1.35;
+      color: var(--text-main);
+    }
+
+    .report-lead {
+      font-size: 1.02rem;
+      color: var(--text-sub);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 18px;
+    }
+
+    .insight-block {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 20px;
+      background: var(--bg);
+      border-radius: 12px;
+      border-left: 4px solid var(--accent);
+    }
+
+    .insight-block h3 {
+      font-size: 1.15rem;
+      color: var(--accent);
+    }
+
+    .insight-block p {
+      font-size: 0.96rem;
+      color: var(--text-main);
+    }
+
+    .ref-list {
+      border-top: 1px solid var(--border);
+      padding-top: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 0.88rem;
+      color: var(--text-sub);
+    }
+
+    .ref-list a {
+      color: var(--accent);
+      text-decoration: underline;
+      word-break: break-all;
+    }
+
+    @media (max-width: 600px) {
+      .hud-bar {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .action-row {
+        grid-template-columns: 1fr;
+      }
+      .result-stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand" onclick="goHome()">語感邊境：台味守門員</div>
+    <div class="nav-actions">
+      <button class="btn-ghost" id="btn-nav-home" onclick="goHome()">返回主頁</button>
+      <button class="btn-ghost" onclick="resetProgress()">重置進度</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- 1. 主頁：大標題 + 雙主題選擇 -->
+    <section id="view-home" class="view active">
+      <div class="hero">
+        <span class="hero-tag">TAIWANESE MANDARIN BORDER</span>
+        <h1>語感邊境：台味守門員</h1>
+        <p>當外來詞彙悄然融入日常對話，你還能分辨哪些是道地台灣語感，哪些是無聲滲透的中國用語嗎？</p>
+      </div>
+
+      <div id="capstone-unlocked-banner" class="capstone-banner" style="display: none;">
+        <div>
+          <strong>🎉 恭喜完成雙主題共 10 關挑戰！</strong>
+          <p style="font-size: 0.9rem; color: var(--text-sub);">你已解鎖「中國用語滲透台灣的語言學觀察報告」。</p>
+        </div>
+        <button class="btn-primary" onclick="showCapstone()">閱讀研究整理</button>
+      </div>
+
+      <div class="theme-grid">
+        <div class="theme-card" onclick="openTheme('nightmarket')">
+          <div>
+            <span class="theme-badge">主題一｜攤位貨物安檢</span>
+            <h2>台味夜市：詞彙海關</h2>
+            <p>檢驗送進夜市的食材與招牌詞彙。分辨台灣慣用語與中國大陸用語，守護在地攤位的原汁原味。</p>
+          </div>
+          <div class="theme-footer">
+            <span id="progress-nightmarket">通關進度：0 / 5 關</span>
+            <span>進入關卡 →</span>
+          </div>
+        </div>
+
+        <div class="theme-card" onclick="openTheme('police')">
+          <div>
+            <span class="theme-badge">主題二｜邊境口語盤查</span>
+            <h2>支語警察：對話攔截</h2>
+            <p>形形色色的路人前來搭話，句中可能夾帶中國流行語或語法。仔細聆聽語境，決定放行或拘留。</p>
+          </div>
+          <div class="theme-footer">
+            <span id="progress-police">通關進度：0 / 5 關</span>
+            <span>進入關卡 →</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. 關卡選擇頁 -->
+    <section id="view-levels" class="view">
+      <div class="section-header">
+        <div>
+          <span class="theme-badge" id="level-theme-sub">主題關卡</span>
+          <h2 id="level-theme-title">關卡選擇</h2>
+        </div>
+        <button class="btn-ghost" onclick="goHome()">← 切換主題</button>
+      </div>
+      <div class="level-list" id="level-list-container"></div>
+    </section>
+
+    <!-- 3. 遊戲進行頁 -->
+    <section id="view-game" class="view">
+      <div class="hud-bar">
+        <div class="hud-cell">
+          <span>目前關卡</span>
+          <strong id="hud-level">第 1 關</strong>
+        </div>
+        <div class="hud-cell">
+          <span>進度</span>
+          <strong id="hud-progress">1 / 6</strong>
+        </div>
+        <div class="hud-cell">
+          <span>關卡分數</span>
+          <strong id="hud-score">0</strong>
+        </div>
+        <div class="hud-cell combo">
+          <span>連擊加成 (+15%/層)</span>
+          <strong id="hud-combo">0 連擊 (1.00x)</strong>
+        </div>
+      </div>
+
+      <div class="stage-card">
+        <div class="speaker-meta">
+          <span id="stage-role">檢驗對象</span>
+          <span id="stage-pass-rule">過關門檻：答對 4 題以上</span>
+        </div>
+
+        <!-- 夜市主題呈現 -->
+        <div id="mode-nightmarket" class="nightmarket-box" style="display: none;">
+          <div class="nightmarket-item" id="nm-word">詞彙</div>
+          <div class="nightmarket-context" id="nm-context">攤位情境</div>
+        </div>
+
+        <!-- 支語警察主題呈現 -->
+        <div id="mode-police" class="dialogue-box" style="display: none;">
+          <div class="speaker-name" id="pc-speaker">路人</div>
+          <div class="speech-bubble" id="pc-sentence">「對話內容」</div>
+        </div>
+      </div>
+
+      <div class="feedback-strip" id="feedback-strip">
+        請根據語感直接做出判斷（無額外提示）
+      </div>
+
+      <div class="action-row">
+        <button class="btn-action btn-pass" id="btn-choice-pass" onclick="submitAnswer(false)">
+          放行（台灣慣用 / 合法語感）
+        </button>
+        <button class="btn-action btn-detain" id="btn-choice-detain" onclick="submitAnswer(true)">
+          拘留（發現中國用語 / 攔截）
+        </button>
+      </div>
+    </section>
+
+    <!-- 4. 單關結算頁 -->
+    <section id="view-result" class="view">
+      <div class="result-card">
+        <span class="hero-tag" id="res-badge">關卡結算</span>
+        <h2 id="res-title">執勤結束</h2>
+        <p id="res-desc" style="color: var(--text-sub);">結算說明</p>
+
+        <div class="result-stats">
+          <div>
+            <span>最終得分</span>
+            <strong id="res-score">0</strong>
+          </div>
+          <div>
+            <span>答對題數</span>
+            <strong id="res-acc">0 / 0</strong>
+          </div>
+          <div>
+            <span>最高連擊</span>
+            <strong id="res-max-combo">0</strong>
+          </div>
+        </div>
+
+        <div class="result-buttons" id="res-buttons"></div>
+      </div>
+    </section>
+
+    <!-- 5. 全部通關後：三篇論文整理專題 -->
+    <section id="view-capstone" class="view">
+      <div class="report-card">
+        <div>
+          <span class="hero-tag">全破關解鎖｜語言社會學深度整理</span>
+          <h2 style="margin-top: 10px;">從「聽得懂」到「分不清」：中國用語如何無聲滲透台灣日常？</h2>
+        </div>
+
+        <p class="report-lead">
+          你已完成「台味夜市」與「支語警察」共十道關卡的語感測試。在遊戲後半段，許多詞彙之所以讓人猶豫，正是因為現實中的台灣社會正經歷「語言接觸」與「詞彙趨同」的過程。綜合政大與師大三篇相關學位論文的研究發現，中國用語對台灣的影響可歸納為三個關鍵階段：
+        </p>
+
+        <div class="insight-block">
+          <h3>一、跨平台與短影音演算法，加速「無意識借詞」</h3>
+          <p>
+            研究指出，即便部分台灣受訪者自認很少主動使用中國社群平台，但透過 YouTube 轉載、Instagram Reels、TikTok 與網路迷因的「媒體聚合效應」，中國流行語仍大量且高頻率地進入台灣閱聽人的日常視野。語言接觸不再需要實體交流，演算法推送已成為詞彙跨海傳播的最主要管道。
+          </p>
+        </div>
+
+        <div class="insight-block">
+          <h3>二、滲透的關鍵不在「懂不懂」，而在「詞源辨識力下降」</h3>
+          <p>
+            政大論文（范友誠，2024）的實證調查顯示，台灣人對中國流行詞彙的「詞意理解度」極高；真正決定一個人是否排斥或接納該詞彙的關鍵，在於「能否分辨它的詞源」。當一個外來詞借用時間拉長（內化程度提高），大眾逐漸忘記它原本來自中國普通話、誤以為是台灣固有詞彙時，原本的排斥態度便會轉為正向接納，並自然融入日常口語。
+          </p>
+        </div>
+
+        <div class="insight-block">
+          <h3>三、從新奇流行語到功能性取代，造成兩岸用詞「趨同」</h3>
+          <p>
+            綜合詞彙演變研究可見，中國用語滲透台灣並非單一事件，而是呈現「名詞流行語 → 動詞與形容詞 → 句式結構（如『進行一個…的動作』、『好絕』、『走心』）」的擴散路徑。當台灣原本已有對應詞彙（例如「品質」被「質量」取代、「影片」被「視頻」取代、「程式」被「軟件」取代），長期重複暴露會削弱本土詞彙的活力，逐步改變台灣華語的詞彙面貌與文化邊界。
+          </p>
+        </div>
+
+        <div class="ref-list">
+          <strong>參考學術文獻（依使用者指定整理）：</strong>
+          <div>1. 范友誠（2024）。《語言趨同或語言趨異：臺灣人對中國詞彙之語言認知與語言態度、媒體使用與政治傾向》。國立政治大學傳播學院碩士論文。<br>
+            <a href="https://ah.lib.nccu.edu.tw/item?item_id=173070" target="_blank" rel="noopener">https://ah.lib.nccu.edu.tw/item?item_id=173070</a>
+          </div>
+          <div>2. 華藝線上圖書館收錄學位論文（兩岸詞彙比較與台灣華語受中國用語影響相關研究）。<br>
+            <a href="https://www.airitilibrary.com/Article/Detail/U0017-1802202221524300" target="_blank" rel="noopener">https://www.airitilibrary.com/Article/Detail/U0017-1802202221524300</a>
+          </div>
+          <div>3. 國立臺灣師範大學學位論文（華語詞彙接觸、新興流行語傳播與語言態度研究）。<br>
+            <a href="https://www.airitilibrary.com/Article/Detail?DocID=U0021-NTNU41990" target="_blank" rel="noopener">https://www.airitilibrary.com/Article/Detail?DocID=U0021-NTNU41990</a>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: center; padding-top: 8px;">
+          <button class="btn-primary" onclick="goHome()">返回主頁</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // 題庫設計：兩大主題各 5 關，難度由淺入深（1. 明顯差異 -> 5. 高度混淆與台灣固有陷阱詞）
+    const GAME_DATA = {
+      nightmarket: {
+        title: "台味夜市：詞彙海關",
+        passLabel: "放行（道地台灣詞）",
+        detainLabel: "拘留（攔截中國用語）",
+        levels: [
+          {
+            level: 1,
+            name: "第 1 關｜攤位開張：基礎食材盤點",
+            desc: "最直觀的日常食物與器具名稱，暖身建立語感。",
+            passScoreRatio: 0.7,
+            questions: [
+              { word: "土豆絲", context: "熱炒攤剛送來的涼拌菜招牌", isChina: true, note: "「土豆」在台灣指花生，中國指馬鈴薯。" },
+              { word: "芭樂汁", context: "現打果汁攤的經典品項", isChina: false, note: "「芭樂」為台灣道地慣用語（中國多稱番石榴）。" },
+              { word: "西紅柿炒蛋", context: "便當攤新貼出的菜色紙條", isChina: true, note: "台灣慣用「番茄」，「西紅柿」為中國用語。" },
+              { word: "鹹酥雞", context: "宵夜場排隊人龍最長的攤位", isChina: false, note: "台灣夜市經典小吃的標準寫法。" },
+              { word: "一次性筷子", context: "餐具箱上貼的衛生標示", isChina: true, note: "台灣慣用「免洗筷」。" },
+              { word: "塑膠袋", context: "外帶飲料時老闆詢問的包裝", isChina: false, note: "台灣慣用「塑膠袋」（中國多稱塑料袋）。" }
+            ]
+          },
+          {
+            level: 2,
+            name: "第 2 關｜人潮湧入：消費與服務用語",
+            desc: "攤商與顧客交易時常見的招牌與告示詞彙。",
+            passScoreRatio: 0.7,
+            questions: [
+              { word: "買單", context: "吃完牛排準備結帳的牌子", isChina: true, note: "原為粵語後成中國通用語，台灣傳統慣用「結帳」。" },
+              { word: "古早味", context: "紅茶攤主打的傳統風味招牌", isChina: false, note: "源自台語的台灣道地文化詞彙。" },
+              { word: "充電寶", context: "服務台提供租借的設備名稱", isChina: true, note: "台灣慣用「行動電源」。" },
+              { word: "悠遊卡", context: "無現金支付機台上貼的圖示", isChina: false, note: "台灣本地交通與小額支付卡片名稱。" },
+              { word: "衛生間", context: "夜市管理處設立的方向指標", isChina: true, note: "台灣普遍使用「洗手間」或「廁所」。" },
+              { word: "打折", context: "服飾攤位掛出的促銷紅布條", isChina: false, note: "台灣原本就會使用的折扣說法。" }
+            ]
+          },
+          {
+            level: 3,
+            name: "第 3 關｜網紅探店：社群與行銷黑話",
+            desc: "近年隨美食短影音傳入的商業與行銷詞彙開始混入。",
+            passScoreRatio: 0.75,
+            questions: [
+              { word: "美食博主", context: "攤位前架著腳架拍片的創作者自稱", isChina: true, note: "「博主」為中國用語，台灣慣用「部落客」或「創作者」。" },
+              { word: "銅板價", context: "強調五十元以內就能吃飽的標語", isChina: false, note: "台灣媒體與商圈常見的平價形容詞。" },
+              { word: "性價比", context: "傳單上寫著「超高性價比套餐」", isChina: true, note: "中國常用「性價比」，台灣慣用「CP值」。" },
+              { word: "主理人", context: "文青雞蛋糕攤位名片上的頭銜", isChina: true, note: "經中國潮流圈流行並大量借入台灣的頭銜詞。" },
+              { word: "在地嚴選", context: "強調使用台灣本地農產的立牌", isChina: false, note: "台灣常見的本土行銷用語。" },
+              { word: "天花板", context: "看板寫著「夜市界美味天花板」", isChina: true, note: "將「天花板」比喻為極限/最高水準源自中國網路流行語。" }
+            ]
+          },
+          {
+            level: 4,
+            name: "第 4 關｜真假難辨：高內化借詞考驗",
+            desc: "已高度融入台灣生活、許多人誤以為是台灣本土詞彙的考題。",
+            passScoreRatio: 0.8,
+            questions: [
+              { word: "閨蜜", context: "飲料店推出「閨蜜第二杯半價」", isChina: true, note: "政大論文研究代表詞：源自中國流行語，台灣原稱「姊妹淘」。" },
+              { word: "網紅", context: "攤位貼滿與知名創作者的合照", isChina: true, note: "源自中國「網路紅人」縮寫，現已高度內化於台灣媒體。" },
+              { word: "龜毛", context: "老闆自嘲對食材挑選非常龜毛", isChina: false, note: "源自台語「ku-moo」，道地台灣用語。" },
+              { word: "顏值", context: "甜點攤主打「高顏值水果塔」", isChina: true, note: "源自中國網路流行語，台灣原多說「長相」或「外貌」。" },
+              { word: "落漆", context: "攤商擔心備料不足會當場落漆", isChina: false, note: "源自台語「lak-tshat」，意指掉漆、出糗。" },
+              { word: "接地氣", context: "讚美這家新開攤位非常接地氣", isChina: true, note: "源自中國北方方言與政治/媒體用語，台灣原稱「親民」或「有台味」。" }
+            ]
+          },
+          {
+            level: 5,
+            name: "第 5 關｜終極海關：語感陷阱大混戰",
+            desc: "包含容易被誤殺的台灣固有詞彙，以及高度隱蔽的中國用語。",
+            passScoreRatio: 0.85,
+            questions: [
+              { word: "窩心", context: "顧客稱讚老闆多送一顆魚丸很窩心", isChina: false, note: "台灣固有詞彙（指溫暖貼心）；在中國反義指「受委屈」。" },
+              { word: "走心", context: "攤商提醒開玩笑別太認真而走心", isChina: true, note: "中國流行語（指入心、動怒或走神），非台灣傳統詞彙。" },
+              { word: "搞定", context: "學徒大喊備料已經全部搞定", isChina: false, note: "早年由粵語傳入台灣並深耕數十年的日常口語。" },
+              { word: "立馬", context: "招牌寫著「點餐後立馬現做」", isChina: true, note: "中國北方口語（意為立刻、馬上），近年透過影視滲透台灣。" },
+              { word: "硬道理", context: "攤位標語「好吃才是硬道理」", isChina: true, note: "出自鄧小平名言，屬典型中國政治與媒體延伸用語。" },
+              { word: "康莊大道", context: "夜市入口彩繪牆上的題字", isChina: false, note: "傳統成語，台灣教育與日常書面語皆正常使用。" },
+              { word: "種草", context: "年輕客人說被這家攤位成功種草了", isChina: true, note: "中國小紅書等社群用語，意指「被推薦而產生購買慾」。" }
+            ]
+          }
+        ]
+      },
+      police: {
+        title: "支語警察：對話攔截",
+        passLabel: "放行（語感正常）",
+        detainLabel: "拘留（句中藏有支語）",
+        levels: [
+          {
+            level: 1,
+            name: "第 1 關｜哨所初執勤：明顯詞彙辨識",
+            desc: "路人對話中帶有非常明顯的中國名詞，測試基本警覺性。",
+            passScoreRatio: 0.7,
+            questions: [
+              { speaker: "趕路的大學生", sentence: "「不好意思，請問這附近哪裡可以買到U盤？我報告忘記存了。」", isChina: true, note: "「U盤」為中國用語，台灣稱為「隨身碟」。" },
+              { speaker: "提著菜籃的阿姨", sentence: "「我剛去全聯買了兩顆高麗菜，順便領了包裹。」", isChina: false, note: "全句皆為道地台灣日常用語。" },
+              { speaker: "滑手機的遊客", sentence: "「這家店的軟件更新之後，介面變得很難操作耶。」", isChina: true, note: "「軟件」為中國用語，台灣稱為「軟體」。" },
+              { speaker: "外送員", sentence: "「你的餐點我放在警衛室櫃台囉，記得下來拿。」", isChina: false, note: "全句為台灣常見外送對話，無中國用語。" },
+              { speaker: "攝影愛好者", sentence: "「我昨天拍了一段高清視頻，等一下傳給你看看。」", isChina: true, note: "「視頻」為中國用語，台灣慣用「影片」。" },
+              { speaker: "高中生", sentence: "「等一下段考結束，我們要不要一起去西門町逛逛？」", isChina: false, note: "自然道地的台灣學生對話。" }
+            ]
+          },
+          {
+            level: 2,
+            name: "第 2 關｜車站巡邏：生活情境對話",
+            desc: "用語藏在較長的日常敘述中，需完整讀完句子才能抓出破綻。",
+            passScoreRatio: 0.7,
+            questions: [
+              { speaker: "拖著行李箱的旅客", sentence: "「我等一下要先去酒店辦理入住，晚上再出來找朋友吃飯。」", isChina: true, note: "台灣一般住宿多稱「飯店」或「旅館」，「酒店」在台灣另有特定娛樂場所含意。" },
+              { speaker: "上班族", sentence: "「今天捷運冷氣好像有點弱，車廂裡面超悶的。」", isChina: false, note: "「捷運」、「車廂」皆為台灣標準用語。" },
+              { speaker: "網購族", sentence: "「這件衣服的質量看起來不錯，但快遞送來的時候盒子壓扁了。」", isChina: true, note: "「質量」（指品質）與「快遞」（台灣多稱宅配/超商取貨）為中國慣用說法。" },
+              { speaker: "早餐店常客", sentence: "「老闆娘，我要一份大冰奶加蘿蔔糕，幫我加辣謝謝。」", isChina: false, note: "道地台灣早餐店對話。" },
+              { speaker: "實習生", sentence: "「主管說這份企劃案需要再優化一下，明天早上再開會討論。」", isChina: true, note: "「優化」原為資訊工程術語，中國職場廣泛用於取代「改善、調整」。" },
+              { speaker: "慢跑路人", sentence: "「河濱公園那邊風很大，你晚上騎腳踏車要記得穿外套。」", isChina: false, note: "「腳踏車」、「河濱公園」皆為台灣自然口語。" }
+            ]
+          },
+          {
+            level: 3,
+            name: "第 3 關｜社群熱搜：流行語與動詞滲透",
+            desc: "年輕族群常在無意間脫口而出的中國網路動詞與形容詞。",
+            passScoreRatio: 0.75,
+            questions: [
+              { speaker: "咖啡廳裡的女生", sentence: "「我昨天熬夜追那部劇，看到結局真的直接破防大哭。」", isChina: true, note: "「破防」源自中國遊戲與網路用語，意指心理防線被突破。" },
+              { speaker: "工程師", sentence: "「這個系統昨天半夜大當機，害我早上六點就被叫起來修。」", isChina: false, note: "「當機」為台灣慣用語（中國多稱死機、崩潰）。" },
+              { speaker: "業務專員", sentence: "「我們下午要跟客戶進行一個深度對接，確認後續合作細節。」", isChina: true, note: "「對接」為中國職場高頻詞，台灣慣用「接洽、聯繫、窗口溝通」。" },
+              { speaker: "書店店員", sentence: "「這本小說目前架上只剩最後一本，需要幫你先保留嗎？」", isChina: false, note: "自然標準的台灣服務業用語。" },
+              { speaker: "美妝愛好者", sentence: "「這支唇膏的顏色也太絕了吧，擦上去整個人很有氛圍感。」", isChina: true, note: "「太絕了」、「氛圍感」皆為近年隨小紅書等平台傳入台灣的典型中國流行語。" },
+              { speaker: "機車騎士", sentence: "「前面那個路口待轉區很小，騎過去的時候要小心一點。」", isChina: false, note: "「待轉區」為台灣特有交通詞彙。" }
+            ]
+          },
+          {
+            level: 4,
+            name: "第 4 關｜語法迷霧：句式結構與隱性借詞",
+            desc: "表面沒有生僻字，但句式結構或副詞用法已受到中國普通話同化。",
+            passScoreRatio: 0.8,
+            questions: [
+              { speaker: "活動主持人", sentence: "「接下來我們請貴賓上台，為我們進行一個剪綵的動作。」", isChina: true, note: "「進行一個…的動作」為冗贅句式，隨中國綜藝與媒體傳入台灣。" },
+              { speaker: "研究所學生", sentence: "「這篇論文的文獻探討我已經整理得差不多了，明天要跟教授討論。」", isChina: false, note: "台灣學術與日常正常語句。" },
+              { speaker: "新創公司創辦人", sentence: "「我們希望透過這個平台賦能傳統產業，打造新的商業閉環。」", isChina: true, note: "「賦能」、「閉環」皆為中國網路科技業高度流行的黑話。" },
+              { speaker: "社區鄰居", sentence: "「樓下管理員說今天下午會停水兩個小時，大家記得先儲水。」", isChina: false, note: "道地台灣生活對話。" },
+              { speaker: "美食評論者", sentence: "「這家店的湯頭喝起來很鮮美，整體來說性價比算蠻高的。」", isChina: true, note: "句尾混入中國詞彙「性價比」（台灣慣用「CP值」或「划算」）。" },
+              { speaker: "設計師", sentence: "「客戶剛剛又改了需求，看來今晚又要加班趕工了。」", isChina: false, note: "無任何中國用語的自然對話。" }
+            ]
+          },
+          {
+            level: 5,
+            name: "第 5 關｜首席督察：高混淆度與台灣陷阱",
+            desc: "考驗是否能精準區分「台灣固有詞彙」與「高度偽裝的中國用語」，切忌過度反應誤抓。",
+            passScoreRatio: 0.85,
+            questions: [
+              { speaker: "資深編輯", sentence: "「這篇文章的切入點很有意思，但後面收尾稍微有點倉促。」", isChina: false, note: "「切入點」在兩岸皆為正常書面語，非中國特有支語。" },
+              { speaker: "團隊組長", sentence: "「這件事我會再跟老闆反饋，有最新消息立馬在群組通知大家。」", isChina: true, note: "「反饋」（台灣慣用「回饋/反映」）與「立馬」皆為中國高頻用語。" },
+              { speaker: "國中老師", sentence: "「你們寫作文的時候不要總是千篇一律，要試著寫出自己的觀察。」", isChina: false, note: "傳統成語，完全符合台灣語言習慣。" },
+              { speaker: "社群小編", sentence: "「這波活動我們成功出圈了，後台私信直接被粉絲灌爆！」", isChina: true, note: "「出圈」（突破同溫層）與「私信」（台灣稱「私訊」）皆為中國用語。" },
+              { speaker: "台南小吃老闆", sentence: "「我們家的肉燥都是每天清晨現熬的，絕對真材實料。」", isChina: false, note: "道地台灣用語。" },
+              { speaker: "專案經理", sentence: "「目前這個方案的可行性還需要再複盤一下，避免出現疏漏。」", isChina: true, note: "「複盤」原為圍棋術語，在中國職場被廣泛用來取代「檢討、回顧」。" },
+              { speaker: "計程車司機", sentence: "「現在尖峰時段高架橋一定塞車，我幫你改走平面道路比較快。」", isChina: false, note: "「尖峰時段」（中國稱高峰期）、「平面道路」皆為道地台灣用語。" }
+            ]
+          }
+        ]
+      }
+    };
+
+    // 遊戲狀態與本地存檔
+    const STORAGE_KEY = "tw_language_border_v1";
+    let progress = loadProgress();
+
+    let currentSession = {
+      themeKey: null,
+      levelIndex: 0,
+      qIndex: 0,
+      score: 0,
+      combo: 0,
+      maxCombo: 0,
+      correctCount: 0,
+      locked: false
+    };
+
+    function loadProgress() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch (e) {}
+      return {
+        nightmarket: { unlocked: 1, bestScores: [0, 0, 0, 0, 0], cleared: [false, false, false, false, false] },
+        police: { unlocked: 1, bestScores: [0, 0, 0, 0, 0], cleared: [false, false, false, false, false] }
+      };
+    }
+
+    function saveProgress() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+      } catch (e) {}
+    }
+
+    function resetProgress() {
+      progress = {
+        nightmarket: { unlocked: 1, bestScores: [0, 0, 0, 0, 0], cleared: [false, false, false, false, false] },
+        police: { unlocked: 1, bestScores: [0, 0, 0, 0, 0], cleared: [false, false, false, false, false] }
+      };
+      saveProgress();
+      goHome();
+    }
+
+    function switchView(viewId) {
+      document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+      document.getElementById(viewId).classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function isAllCleared() {
+      const nmAll = progress.nightmarket.cleared.every(Boolean);
+      const pcAll = progress.police.cleared.every(Boolean);
+      return nmAll && pcAll;
+    }
+
+    function goHome() {
+      const nmDone = progress.nightmarket.cleared.filter(Boolean).length;
+      const pcDone = progress.police.cleared.filter(Boolean).length;
+      document.getElementById("progress-nightmarket").textContent = `通關進度：${nmDone} / 5 關`;
+      document.getElementById("progress-police").textContent = `通關進度：${pcDone} / 5 關`;
+
+      const banner = document.getElementById("capstone-unlocked-banner");
+      banner.style.display = isAllCleared() ? "flex" : "none";
+
+      switchView("view-home");
+    }
+
+    function openTheme(themeKey) {
+      currentSession.themeKey = themeKey;
+      const theme = GAME_DATA[themeKey];
+      const themeProg = progress[themeKey];
+
+      document.getElementById("level-theme-sub").textContent =
+        themeKey === "nightmarket" ? "主題一｜攤位貨物安檢" : "主題二｜邊境口語盤查";
+      document.getElementById("level-theme-title").textContent = theme.title;
+
+      const container = document.getElementById("level-list-container");
+      container.innerHTML = "";
+
+      theme.levels.forEach((lvl, idx) => {
+        const levelNum = idx + 1;
+        const unlocked = levelNum <= themeProg.unlocked;
+        const cleared = themeProg.cleared[idx];
+        const best = themeProg.bestScores[idx];
+
+        const item = document.createElement("div");
+        item.className = `level-item ${unlocked ? "unlocked" : "locked"}`;
+        if (unlocked) {
+          item.onclick = () => startLevel(themeKey, idx);
+        }
+
+        let statusHtml = "";
+        if (!unlocked) {
+          statusHtml = `<span style="color: var(--text-sub);">🔒 尚未解鎖</span>`;
+        } else if (cleared) {
+          statusHtml = `<span style="color: var(--pass);">✅ 已通關</span><br><span style="font-size:0.8rem; color:var(--text-sub);">最高 ${best} 分</span>`;
+        } else {
+          statusHtml = `<span style="color: var(--accent);">▶ 開始挑戰</span>`;
+        }
+
+        item.innerHTML = `
+          <div class="level-info">
+            <h3>${lvl.name}</h3>
+            <p>${lvl.desc}（共 ${lvl.questions.length} 題）</p>
+          </div>
+          <div class="level-status">${statusHtml}</div>
+        `;
+        container.appendChild(item);
+      });
+
+      switchView("view-levels");
+    }
+
+    function startLevel(themeKey, levelIndex) {
+      const theme = GAME_DATA[themeKey];
+      const lvl = theme.levels[levelIndex];
+
+      currentSession = {
+        themeKey,
+        levelIndex,
+        qIndex: 0,
+        score: 0,
+        combo: 0,
+        maxCombo: 0,
+        correctCount: 0,
+        locked: false
+      };
+
+      document.getElementById("btn-choice-pass").textContent = theme.passLabel;
+      document.getElementById("btn-choice-detain").textContent = theme.detainLabel;
+
+      const reqCorrect = Math.ceil(lvl.questions.length * lvl.passScoreRatio);
+      document.getElementById("stage-pass-rule").textContent = `過關條件：答對 ${reqCorrect} / ${lvl.questions.length} 題`;
+
+      renderQuestion();
+      switchView("view-game");
+    }
+
+    function renderQuestion() {
+      const theme = GAME_DATA[currentSession.themeKey];
+      const lvl = theme.levels[currentSession.levelIndex];
+      const q = lvl.questions[currentSession.qIndex];
+
+      document.getElementById("hud-level").textContent = `第 ${lvl.level} 關`;
+      document.getElementById("hud-progress").textContent = `${currentSession.qIndex + 1} / ${lvl.questions.length}`;
+      document.getElementById("hud-score").textContent = currentSession.score;
+
+      const multiplier = (1 + currentSession.combo * 0.15).toFixed(2);
+      document.getElementById("hud-combo").textContent = `${currentSession.combo} 連擊 (${multiplier}x)`;
+
+      const fb = document.getElementById("feedback-strip");
+      fb.className = "feedback-strip";
+      fb.textContent = "請根據語感直接做出判斷";
+
+      document.getElementById("btn-choice-pass").disabled = false;
+      document.getElementById("btn-choice-detain").disabled = false;
+      currentSession.locked = false;
+
+      if (currentSession.themeKey === "nightmarket") {
+        document.getElementById("stage-role").textContent = `待檢驗貨物 #${currentSession.qIndex + 1}`;
+        document.getElementById("mode-nightmarket").style.display = "block";
+        document.getElementById("mode-police").style.display = "none";
+        document.getElementById("nm-word").textContent = q.word;
+        document.getElementById("nm-context").textContent = q.context;
+      } else {
+        document.getElementById("stage-role").textContent = `邊境受檢對象 #${currentSession.qIndex + 1}`;
+        document.getElementById("mode-nightmarket").style.display = "none";
+        document.getElementById("mode-police").style.display = "flex";
+        document.getElementById("pc-speaker").textContent = q.speaker;
+        document.getElementById("pc-sentence").textContent = q.sentence;
+      }
+    }
+
+    function submitAnswer(userChoseDetain) {
+      if (currentSession.locked) return;
+      currentSession.locked = true;
+
+      document.getElementById("btn-choice-pass").disabled = true;
+      document.getElementById("btn-choice-detain").disabled = true;
+
+      const theme = GAME_DATA[currentSession.themeKey];
+      const lvl = theme.levels[currentSession.levelIndex];
+      const q = lvl.questions[currentSession.qIndex];
+
+      const isCorrect = (userChoseDetain === q.isChina);
+      const fb = document.getElementById("feedback-strip");
+
+      if (isCorrect) {
+        currentSession.correctCount += 1;
+        // 連續答對 Combo 加分 (+15% 遞增)
+        const multiplier = 1 + currentSession.combo * 0.15;
+        const gained = Math.round(100 * multiplier);
+        currentSession.score += gained;
+        currentSession.combo += 1;
+        if (currentSession.combo > currentSession.maxCombo) {
+          currentSession.maxCombo = currentSession.combo;
+        }
+
+        fb.className = "feedback-strip correct";
+        fb.textContent = `✅ 判斷正確（+${gained} 分）｜${q.note}`;
+      } else {
+        currentSession.combo = 0;
+        fb.className = "feedback-strip wrong";
+        fb.textContent = `❌ 判斷失誤（連擊歸零）｜${q.note}`;
+      }
+
+      document.getElementById("hud-score").textContent = currentSession.score;
+      const nextMult = (1 + currentSession.combo * 0.15).toFixed(2);
+      document.getElementById("hud-combo").textContent = `${currentSession.combo} 連擊 (${nextMult}x)`;
+
+      setTimeout(() => {
+        currentSession.qIndex += 1;
+        if (currentSession.qIndex < lvl.questions.length) {
+          renderQuestion();
+        } else {
+          finishLevel();
+        }
+      }, 1500);
+    }
+
+    function finishLevel() {
+      const { themeKey, levelIndex, score, correctCount, maxCombo } = currentSession;
+      const theme = GAME_DATA[themeKey];
+      const lvl = theme.levels[levelIndex];
+      const total = lvl.questions.length;
+      const reqCorrect = Math.ceil(total * lvl.passScoreRatio);
+      const passed = correctCount >= reqCorrect;
+
+      const themeProg = progress[themeKey];
+      if (score > themeProg.bestScores[levelIndex]) {
+        themeProg.bestScores[levelIndex] = score;
+      }
+
+      if (passed) {
+        themeProg.cleared[levelIndex] = true;
+        if (levelIndex + 2 > themeProg.unlocked && levelIndex + 2 <= 5) {
+          themeProg.unlocked = levelIndex + 2;
+        }
+      }
+      saveProgress();
+
+      document.getElementById("res-badge").textContent = passed ? "通關成功" : "未達門檻";
+      document.getElementById("res-title").textContent = passed
+        ? `🎉 通過 ${lvl.name}`
+        : `⚠️ ${lvl.name} 挑戰失敗`;
+      document.getElementById("res-desc").textContent = passed
+        ? "語感精準！已解鎖下一階段任務。"
+        : `本關需答對至少 ${reqCorrect} 題才能解鎖下一關，請再試一次。`;
+
+      document.getElementById("res-score").textContent = score;
+      document.getElementById("res-acc").textContent = `${correctCount} / ${total}`;
+      document.getElementById("res-max-combo").textContent = `${maxCombo} 連擊`;
+
+      const btnContainer = document.getElementById("res-buttons");
+      btnContainer.innerHTML = "";
+
+      if (isAllCleared()) {
+        const capBtn = document.createElement("button");
+        capBtn.className = "btn-primary";
+        capBtn.textContent = "📜 查看全破關學術解析報告";
+        capBtn.onclick = showCapstone;
+        btnContainer.appendChild(capBtn);
+      } else if (passed && levelIndex + 1 < 5) {
+        const nextBtn = document.createElement("button");
+        nextBtn.className = "btn-primary";
+        nextBtn.textContent = "挑戰下一關 →";
+        nextBtn.onclick = () => startLevel(themeKey, levelIndex + 1);
+        btnContainer.appendChild(nextBtn);
+      } else if (passed && levelIndex + 1 === 5) {
+        const otherTheme = themeKey === "nightmarket" ? "police" : "nightmarket";
+        const otherBtn = document.createElement("button");
+        otherBtn.className = "btn-primary";
+        otherBtn.textContent = `前往另一主題：${GAME_DATA[otherTheme].title}`;
+        otherBtn.onclick = () => openTheme(otherTheme);
+        btnContainer.appendChild(otherBtn);
+      }
+
+      const retryBtn = document.createElement("button");
+      retryBtn.className = "btn-ghost";
+      retryBtn.textContent = "重新挑戰本關";
+      retryBtn.onclick = () => startLevel(themeKey, levelIndex);
+      btnContainer.appendChild(retryBtn);
+
+      const backBtn = document.createElement("button");
+      backBtn.className = "btn-ghost";
+      backBtn.textContent = "返回關卡列表";
+      backBtn.onclick = () => openTheme(themeKey);
+      btnContainer.appendChild(backBtn);
+
+      switchView("view-result");
+    }
+
+    function showCapstone() {
+      switchView("view-capstone");
+    }
+
+    // 初始化
+    goHome();
+  </script>
+</body>
+</html>
